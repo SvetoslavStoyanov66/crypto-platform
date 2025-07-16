@@ -2,6 +2,7 @@ package com.example.cryptoplatform.repository;
 
 import com.example.cryptoplatform.models.ApplicationUser;
 import com.example.cryptoplatform.models.Role;
+import com.example.cryptoplatform.models.Wallet;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +12,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -20,7 +20,9 @@ import java.util.Set;
 public class UserRepository {
 
     private final JdbcTemplate jdbcTemplate;
-
+    private final RoleRepository roleRepository;
+    private final WalletRepository walletRepository;
+    private final TransactionRepository transactionRepository;
 
     public Optional<ApplicationUser> findByUsername(String username) {
         String sql = "SELECT user_id, username, password FROM users WHERE username = ?";
@@ -28,30 +30,19 @@ public class UserRepository {
         try {
             ApplicationUser user = jdbcTemplate.queryForObject(sql, userRowMapper, username);
             if (user != null) {
-                Set<Role> roles = findRolesByUserId(user.getUserId());
+                Set<Role> roles = roleRepository.findRolesByUserId(user.getUserId());
                 user.setAuthorities(roles);
+
+                Wallet wallet = walletRepository.findWalletByUserId(user.getUserId());
+                user.setWallet(wallet);
+
+                user.setTransactionHistory(transactionRepository.findTransactionsByUserId(user.getUserId()));
             }
             return Optional.ofNullable(user);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
     }
-
-    public Set<Role> findRolesByUserId(Integer userId) {
-        String sql = "SELECT r.role_id, r.authority " +
-                "FROM roles r " +
-                "JOIN user_role_junction ur ON r.role_id = ur.role_id " +
-                "WHERE ur.user_id = ?";
-
-        return new HashSet<>(jdbcTemplate.query(sql, roleRowMapper, userId));
-    }
-
-    private final RowMapper<Role> roleRowMapper = (rs, rowNum) -> {
-        Role role = new Role();
-        role.setRoleId(rs.getInt("role_id"));
-        role.setAuthority(rs.getString("authority"));
-        return role;
-    };
 
     private final RowMapper<ApplicationUser> userRowMapper = (rs, rowNum) -> {
         ApplicationUser user = new ApplicationUser();
@@ -83,6 +74,14 @@ public class UserRepository {
                         generatedId, role.getRoleId()
                 );
             });
+        }
+
+        if (user.getWallet() != null) {
+            walletRepository.save(user.getWallet(), user.getUserId());
+        }
+
+        if (user.getTransactionHistory() != null && !user.getTransactionHistory().isEmpty()) {
+            transactionRepository.saveAll(user.getTransactionHistory(), user.getUserId());
         }
 
         return user;

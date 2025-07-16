@@ -1,8 +1,10 @@
 package com.example.cryptoplatform.services;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.example.cryptoplatform.models.*;
 import com.example.cryptoplatform.services.security.TokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.cryptoplatform.models.ApplicationUser;
-import com.example.cryptoplatform.models.LoginResponseDTO;
-import com.example.cryptoplatform.models.Role;
 import com.example.cryptoplatform.repository.RoleRepository;
 import com.example.cryptoplatform.repository.UserRepository;
 
@@ -44,7 +43,7 @@ public class AuthenticationService {
 
         authorities.add(userRole);
 
-        return userRepository.save(new ApplicationUser(username, encodedPassword, authorities));
+        return userRepository.save(new ApplicationUser(username, encodedPassword, authorities, new Wallet(), new ArrayList<>()));
     }
 
     public LoginResponseDTO loginUser(String username, String password){

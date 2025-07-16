@@ -2,15 +2,17 @@ package com.example.cryptoplatform.models;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
+import lombok.ToString;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
+@ToString
 public class ApplicationUser implements UserDetails{
 
     @Getter
@@ -26,17 +28,27 @@ public class ApplicationUser implements UserDetails{
     @Setter
     private Set<Role> authorities;
 
+    @Getter
+    @Setter
+    private Wallet wallet;
+
+    @Getter
+    @Setter
+    private List<Transaction> transactionHistory;
+
     public ApplicationUser() {
         super();
         authorities = new HashSet<>();
     }
 
 
-    public ApplicationUser(String username, String password, Set<Role> authorities) {
+    public ApplicationUser(String username, String password, Set<Role> authorities, Wallet wallet, List<Transaction> transactionHistory) {
         super();
         this.username = username;
         this.password = password;
         this.authorities = authorities;
+        this.wallet = wallet;
+        this.transactionHistory = transactionHistory;
     }
 
     public void setId(Integer userId) {

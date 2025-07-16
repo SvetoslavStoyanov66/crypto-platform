@@ -9,7 +9,9 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @AllArgsConstructor
@@ -26,6 +28,15 @@ public class RoleRepository {
         } catch (org.springframework.dao.EmptyResultDataAccessException e) {
             return Optional.empty();
         }
+    }
+
+    public Set<Role> findRolesByUserId(Integer userId) {
+        String sql = "SELECT r.role_id, r.authority " +
+                "FROM roles r " +
+                "JOIN user_role_junction ur ON r.role_id = ur.role_id " +
+                "WHERE ur.user_id = ?";
+
+        return new HashSet<>(jdbcTemplate.query(sql, roleRowMapper, userId));
     }
 
     private final RowMapper<Role> roleRowMapper = (rs, rowNum) -> {
