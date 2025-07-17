@@ -11,10 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @SpringBootApplication
 public class CryptoPlatformApplication {
@@ -32,7 +29,9 @@ public class CryptoPlatformApplication {
 			Set<Role> roles = new HashSet<>();
 			roles.add(userRole);
 
-			ApplicationUser user = new ApplicationUser("user", passwordEncode.encode("password"), roles, new Wallet(), List.of(new Transaction(1, Instant.now(), TransactionType.BUY, "SOL", BigDecimal.valueOf(12)),new Transaction(1, Instant.now(), TransactionType.SELL, "ETH", BigDecimal.valueOf(10))));
+			HashMap<String, BigDecimal> crypto = new HashMap<>();
+			crypto.put("SOL", BigDecimal.valueOf(22));
+			ApplicationUser user = new ApplicationUser("user", passwordEncode.encode("password"), roles, new Wallet(-1, BigDecimal.valueOf(100000),crypto) , List.of(new Transaction(1, Instant.now(), TransactionType.BUY, "SOL", BigDecimal.valueOf(12)),new Transaction(1, Instant.now(), TransactionType.SELL, "ETH", BigDecimal.valueOf(10))));
 
 			System.out.println(userRepository.save(user));
 		};

@@ -44,7 +44,10 @@ const Navbar = () => {
               >
                 Transactions
               </button>
-            <button onClick={logout} style={styles.button}>
+            <button 
+                onClick={() => navigate('/wallet')} 
+                style={styles.button}
+              >
               My Wallet
             </button>
             <button onClick={logout} style={styles.button}>

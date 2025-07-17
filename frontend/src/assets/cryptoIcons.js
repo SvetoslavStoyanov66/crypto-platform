@@ -1,5 +1,5 @@
 
-  const CRYPTO_ICONS = {
+  export const CRYPTO_ICONS = {
   XBT: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png',
   ETH: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
   ADA: 'https://assets.coingecko.com/coins/images/975/large/cardano.png',
