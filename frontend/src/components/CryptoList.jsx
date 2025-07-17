@@ -158,12 +158,11 @@ function CryptoList() {
 
 const styles = {
   container: {
-    marginTop: '2rem',
+    marginTop: '7rem',
     width: '100vw',
     height: '100vh',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f9f9f9',
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",

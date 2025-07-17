@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { modalStyles } from './modalStyles';
+import { modalStyles } from './styles/modalStyles';
 
 const RegisterModal = ({ onClose, showLogin }) => {
   const [formData, setFormData] = useState({

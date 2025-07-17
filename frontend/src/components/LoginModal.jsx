@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { modalStyles } from './modalStyles';
+import { modalStyles } from './styles/modalStyles';
 import { useAuth } from '../AuthContext';
 
 const LoginModal = ({ onClose, showRegister }) => {
@@ -28,7 +28,7 @@ const LoginModal = ({ onClose, showRegister }) => {
     try {
       const response = await axios.post('http://localhost:8080/api/auth/login', formData);
       if(response.data.jwt != "") {
-          login(response.data.token);
+          login(response.data.jwt);
       } else {
           setError(err.response?.data?.message || 'Login failed');
       }

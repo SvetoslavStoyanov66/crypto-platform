@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
@@ -6,13 +7,21 @@ import RegisterModal from './RegisterModal';
 const Navbar = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, getUser} = useAuth();
+  const navigate = useNavigate();
+
 
   return (
     <>
       <nav style={styles.navbar}>
         <div style={styles.leftSection}>
-          <span style={styles.logo}>Crypto-Platform</span>
+          <span 
+            style={styles.logo} 
+            onClick={() => navigate('/')}  
+            className="clickable-logo"  
+          >
+            Crypto-Platform
+          </span>
         </div>
         <div style={styles.rightSection}>
           {!isAuthenticated ? (
@@ -28,9 +37,20 @@ const Navbar = () => {
               </button>
             </>
           ) : (
+            <>
+              <button 
+                onClick={() => navigate('/transactions')} 
+                style={styles.button}
+              >
+                Transactions
+              </button>
+            <button onClick={logout} style={styles.button}>
+              My Wallet
+            </button>
             <button onClick={logout} style={styles.button}>
               Logout
             </button>
+           </>
           )}
         </div>
       </nav>
