@@ -1,11 +1,17 @@
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import CryptoList from './components/CryptoList';
+import Navbar from './components/NavBar';
+import { AuthProvider } from './AuthContext';
 
 function App() {
   return (
-    <div>
-      <CryptoList />
-    </div>
+    <Router>
+      <AuthProvider>
+        <Navbar />
+        <CryptoList />
+      </AuthProvider>
+    </Router>
   );
 }
 
