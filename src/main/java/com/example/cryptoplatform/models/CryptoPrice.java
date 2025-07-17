@@ -8,7 +8,7 @@ import lombok.Data;
 public class CryptoPrice {
     private String symbol;
     private double lastPrice;
-    private double ask;
-    private double bid;
+    private double change;
+    private double volume;
 }
 

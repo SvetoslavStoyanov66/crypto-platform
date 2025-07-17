@@ -22,6 +22,6 @@ public class CryptoPriceService {
     }
 
     public Optional<CryptoPrice> getPrice(String symbol) {
-        return Optional.ofNullable(prices.get(symbol + "/USD"));
+        return Optional.ofNullable(prices.get(symbol));
     }
 }

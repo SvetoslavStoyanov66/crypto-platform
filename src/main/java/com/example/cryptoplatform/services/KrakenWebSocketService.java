@@ -41,15 +41,12 @@ public class KrakenWebSocketService extends WebSocketClient {
     private void subscribeToTicker() throws Exception {
         Map<String, Object> params = Map.of(
                 "channel", "ticker",
-                "symbol", PAIRS,
-                "event_trigger", "trades",
-                "snapshot", false
+                "symbol", PAIRS
         );
 
         Map<String, Object> subscribeMessage = Map.of(
                 "method", "subscribe",
-                "params", params,
-                "req_id", 1
+                "params", params
         );
 
         this.send(mapper.writeValueAsString(subscribeMessage));
@@ -62,22 +59,33 @@ public class KrakenWebSocketService extends WebSocketClient {
 
             if (json.has("channel") && "ticker".equals(json.get("channel").asText())) {
                 JsonNode dataArray = json.get("data");
+
                 if (dataArray != null && dataArray.isArray() && dataArray.size() > 0) {
-                    JsonNode data = dataArray.get(0);
+                    JsonNode ticker = dataArray.get(0);
 
-                    String symbol = data.get("symbol").asText();
+                    String symbol = getTextSafe(ticker, "symbol");
+                    double last = getDoubleSafe(ticker, "last");
+                    double changePct = getDoubleSafe(ticker, "change_pct");
+                    double volume = getDoubleSafe(ticker, "volume");
 
-                    double ask = data.get("ask").asDouble();
-                    double bid = data.get("bid").asDouble();
-                    double last = data.get("last").asDouble();
-
-                    CryptoPrice price = new CryptoPrice(symbol, last, ask, bid);
-                    cryptoPriceService.updatePrice(symbol, price);
+                    if (symbol != null) {
+                        CryptoPrice price = new CryptoPrice(symbol, last, changePct, volume);
+                        cryptoPriceService.updatePrice(symbol, price);
+                    }
                 }
             }
         } catch (Exception e) {
+            System.err.println("Failed to process message: " + message);
             e.printStackTrace();
         }
+    }
+
+    private String getTextSafe(JsonNode node, String key) {
+        return node.has(key) && !node.get(key).isNull() ? node.get(key).asText() : null;
+    }
+
+    private double getDoubleSafe(JsonNode node, String key) {
+        return node.has(key) && !node.get(key).isNull() ? node.get(key).asDouble() : 0.0;
     }
 
     @Override
