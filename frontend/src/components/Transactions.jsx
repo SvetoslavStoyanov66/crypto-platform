@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 import { Spin, Alert, Tag } from 'antd';
 import { format } from 'date-fns';
+import { CRYPTO_ICONS } from '../assets/cryptoIcons';
 
 const Transactions = () => {
   const { isAuthenticated, token } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -84,8 +84,14 @@ const Transactions = () => {
                   </Tag>
                 </td>
                 <td style={styles.assetCell}>
-                  {tx.asset}
-                </td>
+                        <img 
+                          src={CRYPTO_ICONS[tx.asset] || CRYPTO_ICONS.DEFAULT} 
+                          alt={tx.asset}
+                          style={styles.icon}
+                          onError={(e) => e.target.src = CRYPTO_ICONS.DEFAULT}
+                        />
+                        {tx.asset}
+                    </td>
                 <td style={styles.amountCell}>
                   {parseFloat(tx.amount).toFixed(2)}
                 </td>
@@ -171,14 +177,18 @@ const styles = {
     padding: '15px'
   },
   assetCell: { 
-    padding: '15px'
+    padding: '15px',
+    lineHeight: '24px'
   },
   amountCell: { 
     padding: '15px',
     textAlign: 'right',
     fontFamily: 'monospace',
     fontSize: '16px' 
-  }
+  },
+  nameWrapper: {
+  },
+  icon: { width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover' }
 };
 
 export default Transactions;

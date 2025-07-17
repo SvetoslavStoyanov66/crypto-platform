@@ -32,7 +32,7 @@ public class CryptoPlatformApplication {
 			Set<Role> roles = new HashSet<>();
 			roles.add(userRole);
 
-			ApplicationUser user = new ApplicationUser("user", passwordEncode.encode("password"), roles, new Wallet(), List.of(new Transaction(1, Instant.now(), TransactionType.BUY, "ETH", BigDecimal.valueOf(12)),new Transaction(1, Instant.now(), TransactionType.SELL, "ETH", BigDecimal.valueOf(10))));
+			ApplicationUser user = new ApplicationUser("user", passwordEncode.encode("password"), roles, new Wallet(), List.of(new Transaction(1, Instant.now(), TransactionType.BUY, "SOL", BigDecimal.valueOf(12)),new Transaction(1, Instant.now(), TransactionType.SELL, "ETH", BigDecimal.valueOf(10))));
 
 			System.out.println(userRepository.save(user));
 		};
