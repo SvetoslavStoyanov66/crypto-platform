@@ -53,35 +53,49 @@ public class UserRepository {
     };
 
     public ApplicationUser save(ApplicationUser user) {
-        String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
-
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"user_id"});
-            ps.setString(1, user.getUsername());
-            ps.setString(2, user.getPassword());
-            return ps;
-        }, keyHolder);
-
-        int generatedId = keyHolder.getKey().intValue();
-        user.setId(generatedId);
-
-        if (user.getAuthorities() != null) {
-            user.getAuthorities().forEach(role -> {
-                jdbcTemplate.update(
-                        "INSERT INTO user_role_junction (user_id, role_id) VALUES (?, ?)",
-                        generatedId, role.getRoleId()
-                );
-            });
+        String checkSql = "SELECT user_id FROM users WHERE username = ?";
+        Integer existingUserId = null;
+        try {
+            existingUserId = jdbcTemplate.queryForObject(checkSql, Integer.class, user.getUsername());
+        } catch (EmptyResultDataAccessException e) {
+            System.out.println(e.getMessage());
         }
 
-        if (user.getWallet() != null) {
-            walletRepository.save(user.getWallet(), user.getUserId());
-        }
+        if (existingUserId != null) {
+            String updateSql = "UPDATE users SET password = ? WHERE user_id = ?";
+            jdbcTemplate.update(updateSql, user.getPassword(), existingUserId);
+            user.setId(existingUserId);
 
-        if (user.getTransactionHistory() != null && !user.getTransactionHistory().isEmpty()) {
-            transactionRepository.saveAll(user.getTransactionHistory(), user.getUserId());
+        } else {
+            String insertSql = "INSERT INTO users (username, password) VALUES (?, ?)";
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(insertSql, new String[]{"user_id"});
+                ps.setString(1, user.getUsername());
+                ps.setString(2, user.getPassword());
+                return ps;
+            }, keyHolder);
+
+            int generatedId = keyHolder.getKey().intValue();
+            user.setId(generatedId);
+
+            if (user.getAuthorities() != null) {
+                user.getAuthorities().forEach(role -> {
+                    jdbcTemplate.update(
+                            "INSERT INTO user_role_junction (user_id, role_id) VALUES (?, ?)",
+                            generatedId, role.getRoleId()
+                    );
+                });
+            }
+
+            if (user.getWallet() != null) {
+                walletRepository.save(user.getWallet(), generatedId);
+            }
+
+            if (user.getTransactionHistory() != null && !user.getTransactionHistory().isEmpty()) {
+                transactionRepository.save(user.getTransactionHistory(), generatedId);
+            }
         }
 
         return user;

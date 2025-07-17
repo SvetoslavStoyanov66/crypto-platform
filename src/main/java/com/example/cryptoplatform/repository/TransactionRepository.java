@@ -39,24 +39,57 @@ public class TransactionRepository {
         }
     }
 
-    public void saveAll(List<Transaction> transactions, Integer userId) {
+    public void insert(Transaction tx, Integer userId) {
         String sql = "INSERT INTO transactions (user_id, timestamp, type, asset, amount) VALUES (?, ?, ?, ?, ?)";
 
-        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                Transaction tx = transactions.get(i);
-                ps.setInt(1, userId);
-                ps.setObject(2, Timestamp.from(tx.getTimestamp()));
-                ps.setString(3, tx.getType().name());
-                ps.setString(4, tx.getAsset());
-                ps.setBigDecimal(5, tx.getAmount());
-            }
-
-            @Override
-            public int getBatchSize() {
-                return transactions.size();
-            }
-        });
+        jdbcTemplate.update(sql,
+                userId,
+                Timestamp.from(tx.getTimestamp()),
+                tx.getType().name(),
+                tx.getAsset(),
+                tx.getAmount()
+        );
     }
+    public void save(List<Transaction> transactions, Integer userId) {
+        String checkSql = """
+        SELECT COUNT(*) FROM transactions
+        WHERE user_id = ? AND timestamp = ? AND type = ? AND asset = ?
+    """;
+
+        String updateSql = """
+        UPDATE transactions
+        SET amount = ?
+        WHERE user_id = ? AND timestamp = ? AND type = ? AND asset = ?
+    """;
+
+        String insertSql = """
+        INSERT INTO transactions (user_id, timestamp, type, asset, amount)
+        VALUES (?, ?, ?, ?, ?)
+    """;
+
+        for (Transaction tx : transactions) {
+            Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class,
+                    userId,
+                    Timestamp.from(tx.getTimestamp()),
+                    tx.getType().name(),
+                    tx.getAsset());
+
+            if (count != null && count > 0) {
+                jdbcTemplate.update(updateSql,
+                        tx.getAmount(),
+                        userId,
+                        Timestamp.from(tx.getTimestamp()),
+                        tx.getType().name(),
+                        tx.getAsset());
+            } else {
+                jdbcTemplate.update(insertSql,
+                        userId,
+                        Timestamp.from(tx.getTimestamp()),
+                        tx.getType().name(),
+                        tx.getAsset(),
+                        tx.getAmount());
+            }
+        }
+    }
+
 }

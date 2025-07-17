@@ -35,7 +35,6 @@ public class CryptoPlatformApplication {
 			ApplicationUser user = new ApplicationUser("user", passwordEncode.encode("password"), roles, new Wallet(), List.of(new Transaction(1, Instant.now(), TransactionType.BUY, "ETH", BigDecimal.valueOf(12))));
 
 			System.out.println(userRepository.save(user));
-			System.out.println(userRepository.findByUsername("user"));
 		};
 	}
 
