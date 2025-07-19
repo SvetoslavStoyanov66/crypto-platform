@@ -13,7 +13,6 @@ const Wallet = () => {
   useEffect(() => {
     const fetchWalletAndPrices = async () => {
       try {
-        // 1. First fetch the wallet data
         const walletResponse = await fetch('http://localhost:8080/api/wallet', {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -24,7 +23,6 @@ const Wallet = () => {
         const walletData = await walletResponse.json();
         setWallet(walletData);
         
-        // 2. Then fetch prices for each crypto in the wallet
         if (walletData.crypto) {
           const cryptoAssets = Object.keys(walletData.crypto);
           const pricePromises = cryptoAssets.map(async (asset) => {

@@ -3,63 +3,91 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
+import ConfirmationModal from './ConfirmationModal';
 
 const Navbar = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-  const { isAuthenticated, logout, getUser} = useAuth();
-  const navigate = useNavigate();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const { isAuthenticated, logout, getUser } = useAuth();
 
+  const navigate = useNavigate();
+    const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    logout();
+    setShowLogoutConfirm(false);
+  };
 
   return (
     <>
       <nav style={styles.navbar}>
         <div style={styles.leftSection}>
-          <span 
-            style={styles.logo} 
-            onClick={() => navigate('/')}  
-            className="clickable-logo"  
+          <span
+            style={styles.logo}
+            onClick={() => navigate('/')}
+            className="clickable-logo"
           >
             Crypto-Platform
           </span>
+          <button
+            onClick={() => setShowLogin(true)}
+            style={styles.button}
+            className="nav-button"
+          >
+            Buy Crypto
+          </button>
         </div>
         <div style={styles.rightSection}>
           {!isAuthenticated ? (
             <>
-              <button onClick={() => setShowLogin(true)} style={styles.button}>
+              <button
+                onClick={() => setShowLogin(true)}
+                style={styles.button}
+                className="nav-button"
+              >
                 Login
               </button>
-              <button 
-                onClick={() => setShowRegister(true)} 
+              <button
+                onClick={() => setShowRegister(true)}
                 style={{ ...styles.button, ...styles.registerButton }}
+                className="nav-button register-button"
               >
                 Register
               </button>
             </>
           ) : (
             <>
-              <button 
-                onClick={() => navigate('/transactions')} 
+              <button
+                onClick={() => navigate('/transactions')}
                 style={styles.button}
+                className="nav-button"
               >
                 Transactions
               </button>
-            <button 
-                onClick={() => navigate('/wallet')} 
+              <button
+                onClick={() => navigate('/wallet')}
                 style={styles.button}
+                className="nav-button"
               >
-              My Wallet
-            </button>
-            <button onClick={logout} style={styles.button}>
-              Logout
-            </button>
-           </>
+                My Wallet
+              </button>
+        <button
+          onClick={handleLogoutClick}
+          style={styles.button}
+          className="nav-button"
+        >
+          Logout
+        </button>
+            </>
           )}
         </div>
       </nav>
 
       {showLogin && (
-        <LoginModal 
+        <LoginModal
           onClose={() => setShowLogin(false)}
           showRegister={() => {
             setShowLogin(false);
@@ -69,7 +97,7 @@ const Navbar = () => {
       )}
 
       {showRegister && (
-        <RegisterModal 
+        <RegisterModal
           onClose={() => setShowRegister(false)}
           showLogin={() => {
             setShowRegister(false);
@@ -77,6 +105,40 @@ const Navbar = () => {
           }}
         />
       )}
+
+      {showLogoutConfirm && (
+        <ConfirmationModal
+          message="Are you sure you want to logout?"
+          onConfirm={confirmLogout}
+          onCancel={() => setShowLogoutConfirm(false)}
+        />
+      )}
+
+      <style jsx>{`
+        .nav-button {
+          transition: all 0.2s ease;
+        }
+        
+        .nav-button:hover {
+          font-weight: bold;
+          transform: scale(1.05);
+        }
+        
+        .register-button:hover {
+          font-weight: bold;
+          transform: scale(1.05);
+        }
+        
+        .clickable-logo {
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        
+        .clickable-logo:hover {
+          font-weight: bold;
+          transform: scale(1.05);
+        }
+      `}</style>
     </>
   );
 };
@@ -99,11 +161,13 @@ const styles = {
   leftSection: {
     display: 'flex',
     alignItems: 'center',
+    gap: '1rem',
   },
   logo: {
     fontSize: '1.5rem',
     fontWeight: 'bold',
     letterSpacing: '1px',
+    color: "lightgray"
   },
   rightSection: {
     display: 'flex',
@@ -118,16 +182,9 @@ const styles = {
     cursor: 'pointer',
     fontSize: '1rem',
     fontWeight: '500',
-    transition: 'all 0.3s ease',
-    ':hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    },
   },
   registerButton: {
     backgroundColor: '#4CAF50',
-    ':hover': {
-      backgroundColor: '#3e8e41',
-    },
   },
 };
 
