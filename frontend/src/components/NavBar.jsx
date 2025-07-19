@@ -4,12 +4,14 @@ import { useAuth } from '../AuthContext';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
 import ConfirmationModal from './ConfirmationModal';
+import BuyCryptoModal from './BuyCryptoModal';
 
 const Navbar = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { isAuthenticated, logout, getUser } = useAuth();
+  const [showBuyCrypto, setShowBuyCrypto] = useState(false);
 
   const navigate = useNavigate();
     const handleLogoutClick = () => {
@@ -33,7 +35,7 @@ const Navbar = () => {
             Crypto-Platform
           </span>
           <button
-            onClick={() => setShowLogin(true)}
+            onClick={() => setShowBuyCrypto(true)}
             style={styles.button}
             className="nav-button"
           >
@@ -112,6 +114,10 @@ const Navbar = () => {
           onConfirm={confirmLogout}
           onCancel={() => setShowLogoutConfirm(false)}
         />
+      )}
+
+      {showBuyCrypto && (
+        <BuyCryptoModal onClose={() => setShowBuyCrypto(false)} />
       )}
 
       <style jsx>{`

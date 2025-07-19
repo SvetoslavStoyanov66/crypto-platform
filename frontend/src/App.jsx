@@ -4,6 +4,7 @@ import Navbar from './components/NavBar';
 import { AuthProvider } from './AuthContext';
 import Transactions from './components/Transactions'; 
 import Wallet from './components/Wallet';
+import './App.css';
 
 function App() {
   return (

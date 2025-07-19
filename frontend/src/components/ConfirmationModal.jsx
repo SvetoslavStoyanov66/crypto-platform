@@ -39,14 +39,13 @@ const modalStyles = {
   },
   modal: {
     backgroundColor: 'white',
-    padding: '2rem',
+    padding: '1.5rem',
     borderRadius: '8px',
-    width: '300px',
     textAlign: 'center',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
   },
   message: {
-    marginBottom: '1.5rem',
+    marginBottom: '3rem',
     color: '#333',
     fontSize: '1.1rem',
   },
@@ -69,7 +68,7 @@ const modalStyles = {
     color: '#333',
   },
   confirmButton: {
-    backgroundColor: '#d32f2f',
+    backgroundColor: '#1a237e',
     color: 'white',
   },
 };
