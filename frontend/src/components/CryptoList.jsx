@@ -138,8 +138,8 @@ function CryptoList() {
 const styles = {
   container: {
     marginTop: '7rem',
-    width: '100vw',
-    height: '100vh',
+    width: '99vw',
+    height: '80vh',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',

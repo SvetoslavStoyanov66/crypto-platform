@@ -228,8 +228,7 @@ const Wallet = () => {
 const styles = {
   container: {
     marginTop: '7rem',
-    width: '100vw',
-    height: '100vh',
+    width: '99vw',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
