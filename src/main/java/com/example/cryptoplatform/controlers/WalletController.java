@@ -4,6 +4,7 @@ import com.example.cryptoplatform.models.Wallet;
 import com.example.cryptoplatform.services.WalletService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,5 +18,10 @@ public class WalletController {
     @GetMapping
     public Wallet getWallet() {
         return walletService.getWallet();
+    }
+
+    @PostMapping("/reset")
+    public void resetWallet() {
+        walletService.resetBalance();
     }
 }

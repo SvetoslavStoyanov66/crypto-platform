@@ -1,62 +1,92 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
-import { Spin, Alert, Card, Statistic, Table } from 'antd';
+import { Spin, Alert, Card, Statistic, Table, message } from 'antd';
 import { CRYPTO_ICONS } from '../assets/cryptoIcons';
+import { modalStyles } from './styles/modalStyles';
+import ConfirmationModal from './ConfirmationModal';
 
 const Wallet = () => {
   const { isAuthenticated, token } = useAuth();
   const [wallet, setWallet] = useState(null);
   const [prices, setPrices] = useState({});
   const [loading, setLoading] = useState(true);
+  const [resetLoading, setResetLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
-  useEffect(() => {
-    const fetchWalletAndPrices = async () => {
-      try {
-        const walletResponse = await fetch('http://localhost:8080/api/wallet', {
-          headers: {
-            'Authorization': `Bearer ${token}`
+  const fetchWalletAndPrices = async () => {
+    try {
+      setLoading(true);
+      const walletResponse = await fetch('http://localhost:8080/api/wallet', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!walletResponse.ok) throw new Error('Failed to fetch wallet');
+      const walletData = await walletResponse.json();
+      setWallet(walletData);
+      
+      if (walletData.crypto) {
+        const cryptoAssets = Object.keys(walletData.crypto);
+        const pricePromises = cryptoAssets.map(async (asset) => {
+          try {
+            const response = await fetch(`http://localhost:8080/api/crypto/prices/${asset}`);
+            if (!response.ok) return { asset, price: 0 };
+            const priceData = await response.json();
+            return { asset, price: priceData.lastPrice };
+          } catch (err) {
+            return { asset, price: 0 };
           }
         });
-        
-        if (!walletResponse.ok) throw new Error('Failed to fetch wallet');
-        const walletData = await walletResponse.json();
-        setWallet(walletData);
-        
-        if (walletData.crypto) {
-          const cryptoAssets = Object.keys(walletData.crypto);
-          const pricePromises = cryptoAssets.map(async (asset) => {
-            try {
-              const response = await fetch(`http://localhost:8080/api/crypto/prices/${asset}`);
-              if (!response.ok) return { asset, price: 0 };
-              const priceData = await response.json();
-              return { asset, price: priceData.lastPrice };
-            } catch (err) {
-              return { asset, price: 0 };
-            }
-          });
 
-          const priceResults = await Promise.all(pricePromises);
-          const priceMap = priceResults.reduce((acc, { asset, price }) => {
-            acc[asset] = price;
-            return acc;
-          }, {});
+        const priceResults = await Promise.all(pricePromises);
+        const priceMap = priceResults.reduce((acc, { asset, price }) => {
+          acc[asset] = price;
+          return acc;
+        }, {});
 
-          setPrices(priceMap);
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        setPrices(priceMap);
       }
-    };
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     if (isAuthenticated && token) {
       fetchWalletAndPrices();
     } else {
       setLoading(false);
     }
   }, [isAuthenticated, token]);
+
+  const handleResetWallet = async () => {
+    try {
+      setResetLoading(true);
+      const response = await fetch('http://localhost:8080/api/wallet/reset', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reset wallet');
+      }
+
+      message.success('Wallet reset successfully');
+      setShowResetConfirm(false);
+      await fetchWalletAndPrices();
+    } catch (err) {
+      message.error(err.message);
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   const columns = [
     {
@@ -78,7 +108,7 @@ const Wallet = () => {
       title: 'Balance',
       dataIndex: 'balance',
       key: 'balance',
-      render: (balance) => parseFloat(balance).toFixed(8),
+      render: (balance) => parseFloat(balance),
       align: 'right',
     },
     {
@@ -161,13 +191,36 @@ const Wallet = () => {
         </Card>
       </div>
 
-      <Table style={styles.table}
+      <button 
+        style={{
+          ...modalStyles.submitButton,
+          width: '200px',
+          opacity: loading || resetLoading ? 0.7 : 1,
+          cursor: loading || resetLoading ? 'not-allowed' : 'pointer'
+        }}
+        onClick={() => setShowResetConfirm(true)}
+        disabled={loading || resetLoading}
+      >
+        {resetLoading ? <Spin size="small" /> : 'Reset Balance'}
+      </button>
+
+      <Table 
+        style={styles.table}
         columns={columns}
         dataSource={tableData}
         bordered
         title={() => <h3 style={styles.tableTitle}>Your Cryptocurrency Holdings</h3>}
         pagination={false}
       />
+
+      {showResetConfirm && (
+        <ConfirmationModal
+          message="Are you sure you want to reset your wallet balance? This action cannot be undone."
+          onConfirm={handleResetWallet}
+          onCancel={() => setShowResetConfirm(false)}
+          confirmLoading={resetLoading}
+        />
+      )}
     </div>
   );
 };
@@ -222,7 +275,6 @@ const styles = {
   },
   table: {
     width: '70%'
-
   } 
 };
 
