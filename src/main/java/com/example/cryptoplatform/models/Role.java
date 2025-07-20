@@ -12,7 +12,6 @@ public class Role implements GrantedAuthority {
     private Integer roleId;
 
     @Setter
-    @Getter
     private String authority;
 
     public Role(){

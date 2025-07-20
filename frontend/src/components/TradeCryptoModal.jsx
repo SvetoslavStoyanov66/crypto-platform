@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CRYPTO_ICONS } from '../assets/cryptoIcons';
 import { useAuth } from '../AuthContext';
 import ConfirmationModal from './ConfirmationModal';
+import { Spin } from 'antd';
 
 const DEFAULT_CRYPTO_OPTIONS = [
   { value: 'BTC', label: 'BTC', icon: CRYPTO_ICONS.BTC },
@@ -297,15 +298,7 @@ const handleSell = async () => {
         <div style={modalStyles.modal}>
           <div style={{ padding: '2rem', textAlign: 'center' }}>
             <div style={{ marginBottom: '1rem' }}>Processing your trade...</div>
-            <div style={{ 
-              display: 'inline-block', 
-              width: '50px', 
-              height: '50px', 
-              border: '3px solid rgba(0,0,0,.1)', 
-              borderLeftColor: '#1a237e', 
-              borderRadius: '50%', 
-              animation: 'spin 1s linear infinite' 
-            }}></div>
+            <Spin></Spin>
           </div>
         </div>
       </div>

@@ -2,13 +2,10 @@ package com.example.cryptoplatform.repository;
 
 import com.example.cryptoplatform.models.Transaction;
 import com.example.cryptoplatform.models.TransactionType;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
