@@ -93,7 +93,7 @@ const Transactions = () => {
                         {tx.asset}
                     </td>
                 <td style={styles.amountCell}>
-                  {parseFloat(tx.amount).toFixed(2)}
+                  {parseFloat(tx.amount)}
                 </td>
               </tr>
             ))}

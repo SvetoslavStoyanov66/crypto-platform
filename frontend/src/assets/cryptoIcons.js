@@ -12,7 +12,7 @@
   BCH: 'https://assets.coingecko.com/coins/images/780/large/bitcoin-cash-circle.png',
   DOGE: 'https://assets.coingecko.com/coins/images/5/large/dogecoin.png',
   ATOM: 'https://assets.coingecko.com/coins/images/1481/large/cosmos_hub.png',
-  ETC: 'https://assets.coingecko.com/coins/images/453/large/ethereum-classic.png',
+  ETC: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1321.png',
   MATIC: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png',
   UNI: 'https://assets.coingecko.com/coins/images/12504/large/uniswap-uni.png',
   XLM: 'https://assets.coingecko.com/coins/images/100/large/Stellar_symbol_black_RGB.png',

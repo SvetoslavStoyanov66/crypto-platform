@@ -27,7 +27,7 @@ public class TradingService {
 
     private final TransactionRepository transactionRepository;
 
-    public void buyCrypto(String cryptoName, long amountToBuy) {
+    public void buyCrypto(String cryptoName, double amountToBuy) {
         ApplicationUser user = authContextManager.getLoggedInUser();
 
         Wallet userWallet = user.getWallet();
@@ -51,7 +51,7 @@ public class TradingService {
         }
     }
 
-    public void sellCrypto(String cryptoName, long amountToSell) {
+    public void sellCrypto(String cryptoName, double amountToSell) {
 
         ApplicationUser user = authContextManager.getLoggedInUser();
 

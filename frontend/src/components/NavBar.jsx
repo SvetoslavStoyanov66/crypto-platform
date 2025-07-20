@@ -190,7 +190,7 @@ const styles = {
     fontWeight: '500',
   },
   registerButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#7e6f1a',
   },
 };
 

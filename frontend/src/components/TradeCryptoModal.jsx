@@ -29,6 +29,8 @@ const TradeCryptoModal = ({ onClose }) => {
   const { isAuthenticated, token } = useAuth();
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState('');
+  const [walletBalance, setWalletBalance] = useState({ usdBalance: 1000, crypto: {} });
+
 
   useEffect(() => {
     const fetchCryptoData = async () => {
@@ -98,6 +100,30 @@ const TradeCryptoModal = ({ onClose }) => {
         setLoading(false);
       }
     };
+
+    const fetchWalletBalance = async () => {
+      if (!isAuthenticated) return;
+      
+      try {
+        const response = await fetch('http://localhost:8080/api/wallet', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch wallet balance: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        setWalletBalance(data);
+      } catch (err) {
+        console.error('Error fetching wallet balance:', err);
+      }
+    };
+
+    fetchWalletBalance();
     fetchCryptoData();
   }, []);
 
@@ -175,6 +201,9 @@ const TradeCryptoModal = ({ onClose }) => {
 
 const handleSell = async () => {
   if (!validateAmount()) return;
+  if (!isAuthenticated) {
+    return;
+  }
   
   try {
     setLoading(true);
@@ -355,7 +384,14 @@ const handleSell = async () => {
         {activeTab === 'buy' ? (
           <div style={modalStyles.inputContainer}>
             <div style={modalStyles.inputGroup}>
+              <div style={modalStyles.inputLables}>
               <label style={modalStyles.inputLabel}>You pay</label>
+              {isAuthenticated && (
+                <label style={modalStyles.inputLabel}>
+                  You have: {walletBalance.usdBalance.toFixed(2)} USD
+                </label>
+              )}              
+              </div>
               <div style={modalStyles.inputWrapper}>
                 <input
                   type="text"
@@ -416,13 +452,20 @@ const handleSell = async () => {
               style={modalStyles.confirmButton}
               disabled={!cryptoAmount || loading}
             >
-              {loading ? 'Processing...' : `Buy ${selectedCrypto}`}
+              {loading ? 'Processing...' : !isAuthenticated ? 'You need to Log In to Buy' : `Buy ${selectedCrypto}`}
             </button>
           </div>
         ) : (
           <div style={modalStyles.inputContainer}>
             <div style={modalStyles.inputGroup}>
+              <div style={modalStyles.inputLables}>
               <label style={modalStyles.inputLabel}>You sell</label>
+              {isAuthenticated && (
+                <label style={modalStyles.inputLabel}>
+                  You have: {walletBalance?.crypto?.[selectedCrypto] ?? 0} {selectedCrypto}
+                </label>
+              )}              
+              </div>
               <div style={modalStyles.inputWrapper}>
                 <input
                   type="text"
@@ -489,7 +532,7 @@ const handleSell = async () => {
               }}
               disabled={!cryptoAmount || loading}
             >
-              {loading ? 'Processing...' : `Sell ${selectedCrypto}`}
+              {loading ? 'Processing...' : !isAuthenticated ? 'You need to Log In to Sell' : `Sell ${selectedCrypto}`}
             </button>
           </div>
         )}
@@ -685,6 +728,7 @@ const modalStyles = {
       cursor: 'not-allowed',
     },
   },
+  inputLables : {display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}
 };
 
 export default TradeCryptoModal;
