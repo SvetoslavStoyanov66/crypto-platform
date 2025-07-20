@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CRYPTO_ICONS } from '../assets/cryptoIcons';
 import { useAuth } from '../AuthContext';
+import ConfirmationModal from './ConfirmationModal';
 
 const DEFAULT_CRYPTO_OPTIONS = [
   { value: 'BTC', label: 'BTC', icon: CRYPTO_ICONS.BTC },
@@ -15,7 +16,7 @@ const DEFAULT_CRYPTO_PRICES = {
   ADA: 0.5,
 };
 
-const BuyCryptoModal = ({ onClose }) => {
+const TradeCryptoModal = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState('buy');
   const [selectedCrypto, setSelectedCrypto] = useState('ETH');
   const [cryptoAmount, setCryptoAmount] = useState('');
@@ -26,6 +27,8 @@ const BuyCryptoModal = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { isAuthenticated, token } = useAuth();
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState('');
 
   useEffect(() => {
     const fetchCryptoData = async () => {
@@ -147,15 +150,15 @@ const BuyCryptoModal = ({ onClose }) => {
 
     const responseText = await response.text();
     if (!responseText) {
-      alert(`Successfully bought ${cryptoAmount} ${selectedCrypto}`);
-      onClose();
+      setConfirmationMessage(`Successfully bought ${cryptoAmount} ${selectedCrypto}`);
+      setShowConfirmation(true);
       return;
     }
 
     try {
       const result = JSON.parse(responseText);
-      alert(`Successfully bought ${cryptoAmount} ${selectedCrypto}`);
-      onClose();
+      setConfirmationMessage(`Successfully bought ${cryptoAmount} ${selectedCrypto}`);
+      setShowConfirmation(true);
     } catch (e) {
       console.error('Error parsing JSON response:', e);
       alert(`Trade completed but received unexpected response`);
@@ -202,15 +205,15 @@ const handleSell = async () => {
 
     const responseText = await response.text();
     if (!responseText) {
-      alert(`Successfully sold ${cryptoAmount} ${selectedCrypto}`);
-      onClose();
+      setConfirmationMessage(`Successfully sold ${cryptoAmount} ${selectedCrypto}`);
+      setShowConfirmation(true);
       return;
     }
 
     try {
       const result = JSON.parse(responseText);
-      alert(`Successfully sold ${cryptoAmount} ${selectedCrypto}`);
-      onClose();
+      setConfirmationMessage(`Successfully sold ${cryptoAmount} ${selectedCrypto}`);
+      setShowConfirmation(true);
     } catch (e) {
       console.error('Error parsing JSON response:', e);
       alert(`Trade completed but received unexpected response`);
@@ -491,8 +494,19 @@ const handleSell = async () => {
           </div>
         )}
       </div>
+      {showConfirmation && (
+        <ConfirmationModal
+          message={confirmationMessage}
+          onCancel={() => {
+            setShowConfirmation(false);
+            onClose();
+          }}
+          isNotification
+        />
+      )}
     </div>
   );
+
 };
 const modalStyles = {
   overlay: {
@@ -673,4 +687,4 @@ const modalStyles = {
   },
 };
 
-export default BuyCryptoModal;
+export default TradeCryptoModal;

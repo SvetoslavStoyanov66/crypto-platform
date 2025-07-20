@@ -1,22 +1,22 @@
-import React from 'react';
-
-const ConfirmationModal = ({ message, onConfirm, onCancel }) => {
+const ConfirmationModal = ({ message, onConfirm, onCancel, isNotification = false }) => {
   return (
     <div style={modalStyles.overlay}>
       <div style={modalStyles.modal}>
         <p style={modalStyles.message}>{message}</p>
         <div style={modalStyles.buttonsContainer}>
+          {!isNotification && (
+            <button 
+              onClick={onCancel}
+              style={{ ...modalStyles.button, ...modalStyles.cancelButton }}
+            >
+              No
+            </button>
+          )}
           <button 
-            onClick={onCancel}
-            style={{ ...modalStyles.button, ...modalStyles.cancelButton }}
-          >
-            No
-          </button>
-          <button 
-            onClick={onConfirm}
+            onClick={isNotification ? onCancel : onConfirm}
             style={{ ...modalStyles.button, ...modalStyles.confirmButton }}
           >
-            Yes
+            {isNotification ? 'OK' : 'Yes'}
           </button>
         </div>
       </div>
@@ -43,9 +43,10 @@ const modalStyles = {
     borderRadius: '8px',
     textAlign: 'center',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    width: '300px',
   },
   message: {
-    marginBottom: '3rem',
+    marginBottom: '1.5rem',
     color: '#333',
     fontSize: '1.1rem',
   },

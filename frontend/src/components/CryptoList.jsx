@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { animated, useSpring } from '@react-spring/web';
 import { CRYPTO_ICONS } from '../assets/cryptoIcons';
+import { Spin } from 'antd';
 
 const AnimatedValue = ({ value, isPositive }) => {
   const props = useSpring({
@@ -78,7 +79,9 @@ function CryptoList() {
   return (
     <div style={styles.container}>
       {loading ? (
-        <p style={styles.loading}>Loading prices...</p>
+         <div style={styles.container}>
+          <Spin size="large" style={styles.spinner} />
+         </div>
       ) : (
         <div style={styles.tableWrapper}>
           <table style={styles.table}>
@@ -174,7 +177,7 @@ const styles = {
   priceCell: { padding: '10px 15px', textAlign: 'right', borderBottom: '1px solid #eee', paddingRight: '40px' },
   changeCell: { padding: '10px 15px', textAlign: 'right', borderBottom: '1px solid #eee' },
   nameWrapper: { display: 'flex', alignItems: 'center', gap: '10px' },
-  icon: { width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover' }
+  icon: { width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover' },
 };
 
 export default CryptoList;

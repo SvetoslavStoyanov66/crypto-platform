@@ -4,14 +4,14 @@ import { useAuth } from '../AuthContext';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
 import ConfirmationModal from './ConfirmationModal';
-import BuyCryptoModal from './BuyCryptoModal';
+import TradeCryptoModal from './TradeCryptoModal';
 
 const Navbar = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { isAuthenticated, logout, getUser } = useAuth();
-  const [showBuyCrypto, setShowBuyCrypto] = useState(false);
+  const [showTradeCrypto, setShowTradeCrypto] = useState(false);
 
   const navigate = useNavigate();
     const handleLogoutClick = () => {
@@ -35,11 +35,11 @@ const Navbar = () => {
             Crypto-Platform
           </span>
           <button
-            onClick={() => setShowBuyCrypto(true)}
+            onClick={() => setShowTradeCrypto(true)}
             style={styles.button}
             className="nav-button"
           >
-            Buy Crypto
+            Trade Crypto
           </button>
         </div>
         <div style={styles.rightSection}>
@@ -116,8 +116,8 @@ const Navbar = () => {
         />
       )}
 
-      {showBuyCrypto && (
-        <BuyCryptoModal onClose={() => setShowBuyCrypto(false)} />
+      {showTradeCrypto && (
+        <TradeCryptoModal onClose={() => setShowTradeCrypto(false)} />
       )}
 
       <style jsx>{`
