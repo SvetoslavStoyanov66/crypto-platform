@@ -2,7 +2,7 @@
 <h2 align="center">💡 Demo Video</h2>
 
 <p align="center">
-  <a href="read-me-assets/demo%20video.mp4" target="_blank">
+  <a href="read-me-assets/Demo%20video.mp4" target="_blank">
     <img src="read-me-assets/video%20preview.png" alt="Watch Demo Video" width="600">
   </a>
 </p>
