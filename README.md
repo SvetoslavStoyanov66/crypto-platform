@@ -33,6 +33,10 @@ This project is a full-stack application with a **Spring Boot backend** in the r
 From the project root (`./`), run:
 
 ```bash
+docker-compose up -d
+```
+
+```bash
 ./mvnw spring-boot:run
 ```
 
